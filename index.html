@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Travel Sentinel - AI Tourism & Travel Safety Sentinel</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Real-time Weather & Security Alert Ticker -->
+  <div class="top-ticker" id="topTicker">
+    <div class="ticker-content">
+      <span class="ticker-badge" id="tickerBadge">ADVISORY</span>
+      <span class="ticker-text" id="tickerText">
+        Ooty: Moderate evening fog on Doddabetta Ghat Road; avoid two-wheeler rides after 8 PM.
+      </span>
+    </div>
+    <div class="ticker-actions">
+      <span id="tickerWeather" style="color: #38bdf8; font-weight: 600;">⛅ 17°C Misty</span>
+      <span style="color: var(--text-muted);">|</span>
+      <span style="color: #4ade80; font-size: 0.75rem;">● GPS Active</span>
+    </div>
+  </div>
+
+  <!-- App Header & Navigation Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-wrapper" onclick="STS_APP.navigateTo('dashboard')">
+        <div class="brand-icon">🛡️</div>
+        <div class="brand-text">
+          <h1 data-i18n="appName">Smart Travel Sentinel</h1>
+          <span data-i18n="tagline">AI Smart Tourism & Travel Safety Sentinel</span>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <!-- Destination Selector Dropdown -->
+        <div class="dest-select-wrap">
+          <span style="font-size: 0.9rem;">📍</span>
+          <select id="destinationSelector" onchange="STS_APP.changeDestination(this.value)">
+            <option value="ooty">Ooty, Tamil Nadu</option>
+            <option value="munnar">Munnar, Kerala</option>
+            <option value="jaipur">Jaipur, Rajasthan</option>
+            <option value="goa">Goa (North & South)</option>
+            <option value="manali">Manali, Himachal</option>
+            <option value="varanasi">Varanasi, UP</option>
+          </select>
+        </div>
+
+        <!-- Multilingual Language Selector (6 Languages) -->
+        <div class="lang-selector dest-select-wrap">
+          <span style="font-size: 0.9rem;">🌐</span>
+          <select id="languageSelector" onchange="STS_APP.changeLanguage(this.value)">
+            <option value="en">English</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="ml">മലയാളം (Malayalam)</option>
+          </select>
+        </div>
+
+        <!-- Dark / Light Theme Toggle -->
+        <button class="header-icon-btn" onclick="STS_APP.toggleTheme()" title="Toggle Dark/Light Mode">
+          <span id="themeIcon">☀️</span>
+        </button>
+
+        <!-- Rapid Offline SOS Emergency Trigger -->
+        <button class="btn-rapid-sos" onclick="STS_APP.triggerSosFlow()" title="Trigger Rapid SOS Distress Beacon">
+          <span>🚨</span>
+          <span data-i18n="quickSosBtn">EMERGENCY SOS</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login & Registration Modal / Screen (shown if not authenticated or toggled) -->
+  <div id="authOverlay" class="modal-overlay">
+    <div class="modal-card" style="max-width: 480px;">
+      <!-- Login View -->
+      <div id="loginFormContainer">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="font-size: 2.5rem; margin-bottom: 8px;">🛡️</div>
+          <h2 data-i18n="loginTitle">Sign in to Sentinel</h2>
+          <p style="color: var(--text-muted); font-size: 0.85rem;" data-i18n="loginSubtitle">Your intelligent Guardian for safe exploration</p>
+        </div>
+
+        <form onsubmit="STS_APP.handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label" data-i18n="emailLabel">Email Address</label>
+            <input type="email" id="loginEmail" class="form-input" value="tourist.dhanusri@sentinel.org" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="passwordLabel">Password</label>
+            <input type="password" id="loginPassword" class="form-input" value="sentinel2026" required>
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;" data-i18n="signInBtn">
+            Sign In to Sentinel
+          </button>
+        </form>
+
+        <div style="margin: 16px 0; text-align: center; color: var(--text-muted); font-size: 0.8rem;">OR</div>
+
+        <!-- 1-Click College Demo Login -->
+        <button type="button" class="btn-secondary" style="width: 100%; border-color: #0ea5e9; color: #38bdf8;" onclick="STS_APP.demoLogin()" data-i18n="demoLoginBtn">
+          ⚡ 1-Click College Demo Login
+        </button>
+
+        <p style="text-align: center; margin-top: 18px; font-size: 0.82rem; color: var(--text-muted);">
+          New traveler? <a href="javascript:void(0)" onclick="STS_APP.toggleAuthMode('register')" style="color: #0ea5e9; font-weight: 600;">Register Profile</a>
+        </p>
+      </div>
+
+      <!-- Registration View -->
+      <div id="registerFormContainer" style="display: none;">
+        <div style="text-align: center; margin-bottom: 16px;">
+          <h2 data-i18n="registerTitle">Register Traveler Profile</h2>
+          <p style="color: var(--text-muted); font-size: 0.82rem;" data-i18n="registerSubtitle">Empower your travels with AI safety coverage</p>
+        </div>
+
+        <form onsubmit="STS_APP.handleRegister(event)">
+          <div class="form-group">
+            <label class="form-label" data-i18n="fullNameLabel">Full Name</label>
+            <input type="text" id="regName" class="form-input" placeholder="e.g. Dhanusri R" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="emailLabel">Email Address</label>
+            <input type="email" id="regEmail" class="form-input" placeholder="name@domain.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="emergencyContactName">Emergency Contact Person</label>
+            <input type="text" id="regEmergName" class="form-input" placeholder="e.g. Ramesh (Parent / Guardian)" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="emergencyContactPhone">Emergency Contact Phone</label>
+            <input type="tel" id="regEmergPhone" class="form-input" placeholder="+91 98765 43210" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="bloodGroupLabel">Blood Group & Allergies</label>
+            <input type="text" id="regBlood" class="form-input" placeholder="e.g. O+ Positive, No known allergies">
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%; margin-top: 8px;" data-i18n="createAccountBtn">
+            Create Free Sentinel Account
+          </button>
+        </form>
+
+        <p style="text-align: center; margin-top: 14px; font-size: 0.82rem; color: var(--text-muted);">
+          Already registered? <a href="javascript:void(0)" onclick="STS_APP.toggleAuthMode('login')" style="color: #0ea5e9; font-weight: 600;">Sign In</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container Layout: Sidebar + Main Views -->
+  <div class="app-container">
+    <!-- Left Navigation Sidebar -->
+    <aside class="app-sidebar">
+      <div class="nav-category">Main Navigation</div>
+      <a class="nav-link active" data-nav="dashboard" onclick="STS_APP.navigateTo('dashboard')">
+        <span>📊</span> <span data-i18n="navHome">Dashboard</span>
+      </a>
+      <a class="nav-link" data-nav="planner" onclick="STS_APP.navigateTo('planner')">
+        <span>🗺️</span> <span data-i18n="navPlanner">AI Trip Planner</span>
+        <span class="nav-badge">AI</span>
+      </a>
+      <a class="nav-link" data-nav="safety" onclick="STS_APP.navigateTo('safety')">
+        <span>🛡️</span> <span data-i18n="navSafety">Safety Score</span>
+      </a>
+      <a class="nav-link" data-nav="qr" onclick="STS_APP.navigateTo('qr')">
+        <span>🏛️</span> <span data-i18n="navQR">QR Tourist Guide</span>
+      </a>
+
+      <div class="nav-category">Security & Tracking</div>
+      <a class="nav-link" data-nav="ble" onclick="STS_APP.navigateTo('ble')">
+        <span>📡</span> <span data-i18n="navBLE">BLE Tracker</span>
+        <span class="nav-badge" id="bleBadgeCount">5 items</span>
+      </a>
+      <a class="nav-link" data-nav="emergency" onclick="STS_APP.navigateTo('emergency')">
+        <span>🏥</span> <span data-i18n="navEmergency">Emergency Hub</span>
+      </a>
+      <a class="nav-link" data-nav="sos" onclick="STS_APP.navigateTo('sos')">
+        <span>🚨</span> <span data-i18n="navSOS">Offline SOS</span>
+        <span class="nav-badge danger">Fail-Safe</span>
+      </a>
+
+      <div class="nav-category">Smart Assistance</div>
+      <a class="nav-link" data-nav="timeline" onclick="STS_APP.navigateTo('timeline')">
+        <span>⏳</span> <span data-i18n="navTimeline">Travel Timeline</span>
+      </a>
+      <a class="nav-link" data-nav="aichat" onclick="STS_APP.navigateTo('aichat')">
+        <span>💬</span> <span data-i18n="navAIChat">Sentinel AI</span>
+        <span class="nav-badge">Chat</span>
+      </a>
+      <a class="nav-link" data-nav="profile" onclick="STS_APP.navigateTo('profile')">
+        <span>⚙️</span> <span data-i18n="navProfile">Profile & Settings</span>
+      </a>
+
+      <!-- Bottom User Mini Card -->
+      <div class="sidebar-user-card" onclick="STS_APP.navigateTo('profile')" style="cursor: pointer;">
+        <div class="user-avatar-badge" id="userAvatarLetter">D</div>
+        <div class="user-info-text">
+          <div class="name" id="userDisplayName">Dhanusri R</div>
+          <div class="role" id="userBadgeId">Tourist ID: STS-9904</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+
+      <!-- ================= 1. HOME DASHBOARD ================= -->
+      <section id="view-dashboard" class="tab-content active">
+        <!-- Hero Banner -->
+        <div class="dash-hero">
+          <div>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+              <span class="ticker-badge" style="background: rgba(14, 165, 233, 0.2); color: #38bdf8; border-color: rgba(14, 165, 233, 0.4);">
+                ACTIVE DESTINATION
+              </span>
+              <span class="ticker-badge" id="heroSafetyTag" style="background: rgba(16, 185, 129, 0.2); color: #4ade80; border-color: rgba(16, 185, 129, 0.4);">
+                SAFE ZONE
+              </span>
+            </div>
+            <h2 class="dash-hero-title" id="heroDestName">Ooty (Udhagamandalam), Tamil Nadu</h2>
+            <p class="dash-hero-desc" id="heroDestDesc">
+              Queen of Hill Stations. Real-time safety telemetry, active police presence, and climate advisories are active for your journey.
+            </p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button class="btn-primary btn-sm" onclick="STS_APP.navigateTo('planner')" data-i18n="planTripNow">Plan a Safe Trip</button>
+              <button class="btn-secondary btn-sm" onclick="STS_APP.navigateTo('safety')" data-i18n="safetyScoreLabel">Inspect Safety Index</button>
+              <button class="btn-secondary btn-sm" onclick="STS_APP.navigateTo('qr')" data-i18n="exploreHeritage">Scan Heritage QR</button>
+            </div>
+          </div>
+          <!-- Circular Safety Meter -->
+          <div class="safety-meter-box">
+            <div class="safety-circular-gauge">
+              <svg viewBox="0 0 100 100">
+                <circle class="gauge-bg" cx="50" cy="50" r="45"></circle>
+                <circle class="gauge-fill" id="dashboardGaugeFill" cx="50" cy="50" r="45"></circle>
+              </svg>
+              <div class="gauge-val-text">
+                <div class="gauge-number" id="dashboardGaugeVal">89</div>
+                <div class="gauge-max">/ 100</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 0.92rem;" data-i18n="safetyScoreLabel">Overall Safety Index</div>
+              <div style="font-size: 0.78rem; color: #4ade80; margin-top: 2px;" id="dashboardGaugeStatus">High Tourist Security</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Based on 14 safety criteria</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Stat Cards -->
+        <div class="dash-stats-row">
+          <div class="stat-card">
+            <div class="stat-icon cyan">📡</div>
+            <div>
+              <div class="stat-val" id="statBleCount">5 / 5</div>
+              <div class="stat-lbl" data-i18n="activeBelongings">Tracked Belongings</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon emerald">🏥</div>
+            <div>
+              <div class="stat-val" id="statEmergCount">6 Near</div>
+              <div class="stat-lbl" data-i18n="getAssistance">Hospitals & Police Kiosks</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon amber">⛅</div>
+            <div>
+              <div class="stat-val" id="statWeather">17°C Misty</div>
+              <div class="stat-lbl" data-i18n="weatherLabel">Live Climate Advisory</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon crimson">🚨</div>
+            <div>
+              <div class="stat-val">112 Ready</div>
+              <div class="stat-lbl">Rapid Offline SOS</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Action Tiles -->
+        <h3 style="margin-bottom: 14px; font-size: 1.1rem; font-weight: 700;">Sentinel Quick Actions</h3>
+        <div class="quick-action-grid">
+          <div class="action-tile" onclick="STS_APP.navigateTo('planner')">
+            <div class="action-tile-icon">🗺️</div>
+            <div class="action-tile-title" data-i18n="navPlanner">AI Trip Planner</div>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Smart budget & safe route</span>
+          </div>
+          <div class="action-tile" onclick="STS_APP.navigateTo('safety')">
+            <div class="action-tile-icon">🛡️</div>
+            <div class="action-tile-title" data-i18n="navSafety">Safety Score</div>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Risk & caution zones</span>
+          </div>
+          <div class="action-tile" onclick="STS_APP.navigateTo('qr')">
+            <div class="action-tile-icon">🏛️</div>
+            <div class="action-tile-title" data-i18n="navQR">QR Tourist Guide</div>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Dossier & audio tour</span>
+          </div>
+          <div class="action-tile" onclick="STS_APP.navigateTo('ble')">
+            <div class="action-tile-icon">📡</div>
+            <div class="action-tile-title" data-i18n="navBLE">BLE Item Tracker</div>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Proximity radar & beep</span>
+          </div>
+          <div class="action-tile" onclick="STS_APP.navigateTo('emergency')">
+            <div class="action-tile-icon">🏥</div>
+            <div class="action-tile-title" data-i18n="navEmergency">Emergency Hub</div>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Hospitals & police booth</span>
+          </div>
+          <div class="action-tile" onclick="STS_APP.navigateTo('aichat')">
+            <div class="action-tile-icon">💬</div>
+            <div class="action-tile-title" data-i18n="navAIChat">Sentinel AI Chat</div>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">24/7 travel advisor</span>
+          </div>
+        </div>
+
+        <!-- Safe Zones vs Caution Zones Preview -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-top: 20px;">
+          <div class="sentinel-card">
+            <div class="card-title">
+              <span>🟢 Verified Safe Corridors</span>
+              <span class="ticker-badge" style="background: rgba(16, 185, 129, 0.15); color: #4ade80;">Patrolled</span>
+            </div>
+            <div id="dashSafeZonesList" style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+          <div class="sentinel-card">
+            <div class="card-title">
+              <span>🟡 Caution Zones & Curfews</span>
+              <span class="ticker-badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">Advisory</span>
+            </div>
+            <div id="dashCautionZonesList" style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 2. AI SMART TRIP PLANNER ================= -->
+      <section id="view-planner" class="tab-content">
+        <div class="view-header">
+          <h2 data-i18n="planTripTitle">AI Smart Trip Planner</h2>
+          <p data-i18n="planTripSubtitle">Intelligent itinerary generation tailored to your interests, budget and safety</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 360px 1fr; gap: 24px; align-items: start;">
+          <!-- Trip Form Controls -->
+          <div class="sentinel-card">
+            <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 16px;">Trip Parameters</h3>
+            <form id="tripPlannerForm" onsubmit="STS_APP.generateTripPlan(event)">
+              <div class="form-group">
+                <label class="form-label" data-i18n="destinationInput">Destination City</label>
+                <select id="planDestSelect" class="form-select">
+                  <option value="ooty">Ooty (Queen of Hill Stations)</option>
+                  <option value="munnar">Munnar (Tea Valley & Waterfalls)</option>
+                  <option value="jaipur">Jaipur (Pink City Heritage)</option>
+                  <option value="goa">Goa (Beaches & Forts)</option>
+                  <option value="manali">Manali (Himalayan Valley)</option>
+                  <option value="varanasi">Varanasi (Spiritual Ghats)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <span data-i18n="numDaysInput">Duration (Days):</span>
+                  <span id="planDaysVal" style="color: #0ea5e9; font-weight: 800;">3 Days</span>
+                </label>
+                <input type="range" id="planDaysInput" min="1" max="7" value="3" class="form-input" style="padding: 4px;" oninput="document.getElementById('planDaysVal').textContent = this.value + ' Days'">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" data-i18n="budgetTierInput">Budget Category</label>
+                <select id="planBudgetSelect" class="form-select">
+                  <option value="budget">Backpacker / Budget (₹1,500 - ₹2,500 / day)</option>
+                  <option value="moderate" selected>Comfort / Moderate (₹3,500 - ₹5,500 / day)</option>
+                  <option value="luxury">Premium / Luxury (₹8,000+ / day)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" data-i18n="interestsInput">Primary Travel Interests</label>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem;">
+                  <label><input type="checkbox" name="interest" value="nature" checked> 🌿 Nature & Mountain Views</label>
+                  <label><input type="checkbox" name="interest" value="heritage" checked> 🏛️ Historic Heritage & Culture</label>
+                  <label><input type="checkbox" name="interest" value="adventure"> 🧗 Adventure & Nature Trails</label>
+                  <label><input type="checkbox" name="interest" value="culinary" checked> ☕ Local Culinary & Tea Tastings</label>
+                  <label><input type="checkbox" name="interest" value="relaxation"> 🧘 Relaxation & Scenic Leisure</label>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;" data-i18n="generatePlanBtn">
+                ✨ Generate AI Safe Itinerary
+              </button>
+            </form>
+          </div>
+
+          <!-- Generated Itinerary Display -->
+          <div id="itineraryResultContainer">
+            <div class="sentinel-card" id="itineraryCard">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div>
+                  <h3 id="itineraryPlanTitle" style="font-size: 1.2rem; font-weight: 800;">3-Day Curated Safe Itinerary for Ooty</h3>
+                  <span id="itineraryPlanSubtitle" style="color: var(--text-muted); font-size: 0.82rem;">Tailored for Moderate Budget • Nature & Heritage</span>
+                </div>
+                <button class="btn-secondary btn-sm" onclick="STS_APP.saveItineraryToTimeline()">
+                  💾 Add to My Timeline
+                </button>
+              </div>
+
+              <!-- Day by day slots -->
+              <div id="itineraryDaysList" style="display: flex; flex-direction: column; gap: 16px;">
+                <!-- Filled dynamically by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. TOURIST SAFETY SCORE ================= -->
+      <section id="view-safety" class="tab-content">
+        <div class="view-header">
+          <h2 data-i18n="safetyScoreTitle">Tourist Safety Score Engine</h2>
+          <p data-i18n="safetyScoreSubtitle">Real-time safety assessment powered by local emergency density and crime risk telemetry</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 360px 1fr; gap: 24px;">
+          <!-- Score Gauge Card -->
+          <div class="sentinel-card" style="text-align: center;">
+            <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+              Destination Safety Index
+            </div>
+            <div class="safety-circular-gauge" style="margin: 16px auto; width: 140px; height: 140px;">
+              <svg viewBox="0 0 100 100">
+                <circle class="gauge-bg" cx="50" cy="50" r="45"></circle>
+                <circle class="gauge-fill" id="safetyScoreBigGauge" cx="50" cy="50" r="45"></circle>
+              </svg>
+              <div class="gauge-val-text">
+                <div class="gauge-number" id="safetyScoreBigVal" style="font-size: 2.2rem;">89</div>
+                <div class="gauge-max">/ 100</div>
+              </div>
+            </div>
+
+            <div id="safetyScoreRatingBadge" class="ticker-badge" style="display: inline-block; font-size: 0.88rem; padding: 4px 14px; background: rgba(16, 185, 129, 0.2); color: #4ade80;">
+              SAFE ZONE
+            </div>
+
+            <div style="margin-top: 20px; text-align: left;">
+              <h4 style="font-size: 0.9rem; margin-bottom: 12px;">Component Sub-Indices</h4>
+              <!-- Subscores -->
+              <div class="subscore-item">
+                <div class="subscore-header">
+                  <span>Solo / Women Safety</span>
+                  <span id="subWomenVal" style="font-weight: 700; color: #4ade80;">91%</span>
+                </div>
+                <div class="subscore-bar-bg"><div class="subscore-bar-fill" id="subWomenBar" style="width: 91%; background: #10b981;"></div></div>
+              </div>
+              <div class="subscore-item">
+                <div class="subscore-header">
+                  <span>Night Travel Security</span>
+                  <span id="subNightVal" style="font-weight: 700; color: #38bdf8;">78%</span>
+                </div>
+                <div class="subscore-bar-bg"><div class="subscore-bar-fill" id="subNightBar" style="width: 78%; background: #0ea5e9;"></div></div>
+              </div>
+              <div class="subscore-item">
+                <div class="subscore-header">
+                  <span>Hospital & Medical Density</span>
+                  <span id="subMedicalVal" style="font-weight: 700; color: #4ade80;">84%</span>
+                </div>
+                <div class="subscore-bar-bg"><div class="subscore-bar-fill" id="subMedicalBar" style="width: 84%; background: #10b981;"></div></div>
+              </div>
+              <div class="subscore-item">
+                <div class="subscore-header">
+                  <span>Scam & Tout Protection</span>
+                  <span id="subScamVal" style="font-weight: 700; color: #4ade80;">92%</span>
+                </div>
+                <div class="subscore-bar-bg"><div class="subscore-bar-fill" id="subScamBar" style="width: 92%; background: #10b981;"></div></div>
+              </div>
+              <div class="subscore-item">
+                <div class="subscore-header">
+                  <span>Weather & Natural Hazard Index</span>
+                  <span id="subHazardVal" style="font-weight: 700; color: #fbbf24;">82%</span>
+                </div>
+                <div class="subscore-bar-bg"><div class="subscore-bar-fill" id="subHazardBar" style="width: 82%; background: #f59e0b;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Safety Details & Recommendations -->
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="sentinel-card">
+              <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 12px;">🛡️ Safe Zones vs Caution Zones</h3>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;" id="safetyZonesDetailGrid">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
+            <div class="sentinel-card">
+              <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 12px;">💡 Sentinel Traveler Safety Advisories</h3>
+              <ul id="safetyTipsDetailList" style="padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 0.88rem; color: #cbd5e1;">
+                <!-- Populated dynamically -->
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 4. QR TOURIST GUIDE ================= -->
+      <section id="view-qr" class="tab-content">
+        <div class="view-header">
+          <h2 data-i18n="qrGuideTitle">QR Tourist Monument Guide</h2>
+          <p data-i18n="qrGuideSubtitle">Scan historic QR plaques for instantaneous architectural dossiers and multilingual audio tours</p>
+        </div>
+
+        <!-- Scanner Simulation Area -->
+        <div class="sentinel-card" style="margin-bottom: 24px;">
+          <div class="qr-scanner-mock">
+            <div class="qr-laser-line"></div>
+            <div style="font-size: 3rem; margin-bottom: 12px;">📷</div>
+            <h4 style="font-weight: 700; margin-bottom: 4px;">Smart QR Optical Reader</h4>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px;">
+              Point camera at any monument QR tag or tap a demo monument badge below to open its verified dossier.
+            </p>
+            <button class="btn-primary btn-sm" onclick="STS_APP.simulateQrCameraScan()">
+              <span>📸</span> Simulate Camera Optical Scan
+            </button>
+          </div>
+
+          <!-- Quick Select Monument Badges -->
+          <div style="text-align: center;">
+            <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 10px;">
+              TAP ANY MONUMENT TO SIMULATE INSTANT QR DECODE:
+            </span>
+            <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;" id="qrMonumentPills">
+              <!-- Dynamically rendered monument pills -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Monument Dossier View -->
+        <div id="monumentDossierContainer">
+          <!-- Populated dynamically with active monument -->
+        </div>
+      </section>
+
+      <!-- ================= 5. BLE LOST ITEM TRACKING ================= -->
+      <section id="view-ble" class="tab-content">
+        <div class="view-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h2 data-i18n="bleTitle">BLE Lost Item Tracking Radar</h2>
+            <p data-i18n="bleSubtitle">Monitor personal belongings with simulated Bluetooth Low Energy RSSI telemetry</p>
+          </div>
+          <button class="btn-primary btn-sm" onclick="STS_APP.openAddBleModal()">
+            <span>➕</span> Register New BLE Tag
+          </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start;">
+          <!-- Radar Simulation Display -->
+          <div class="sentinel-card" style="text-align: center;">
+            <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">
+              Proximity Radar (360° Sweep)
+            </div>
+
+            <div class="radar-wrapper" id="bleRadarBox">
+              <div class="radar-circle c1"></div>
+              <div class="radar-circle c2"></div>
+              <div class="radar-circle c3"></div>
+              <div class="radar-crosshair-v"></div>
+              <div class="radar-crosshair-h"></div>
+              <div class="radar-sweep"></div>
+              <!-- Blips dynamically rendered -->
+              <div id="radarBlipsContainer"></div>
+            </div>
+
+            <div style="display: flex; justify-content: space-around; font-size: 0.78rem; color: var(--text-muted);">
+              <div><span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span> Connected</div>
+              <div><span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span> Out of Range</div>
+            </div>
+            <button class="btn-secondary btn-sm" style="width: 100%; margin-top: 14px;" onclick="STS_APP.rescanBleDevices()">
+              🔄 Re-scan BLE Frequency Bands
+            </button>
+          </div>
+
+          <!-- Items Grid -->
+          <div>
+            <div class="ble-items-grid" id="bleItemsList">
+              <!-- Dynamically populated BLE item cards -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 6. EMERGENCY ASSISTANCE ================= -->
+      <section id="view-emergency" class="tab-content">
+        <div class="view-header">
+          <h2 data-i18n="emergencyTitle">Emergency Assistance Directory</h2>
+          <p data-i18n="emergencySubtitle">Immediate access to verified local hospitals, tourist police cells and national 24/7 hotlines</p>
+        </div>
+
+        <!-- Filter tabs for emergency -->
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+          <button class="btn-secondary btn-sm active" id="btnFilterEmergAll" onclick="STS_APP.filterEmergency('all')">All Services</button>
+          <button class="btn-secondary btn-sm" id="btnFilterEmergHosp" onclick="STS_APP.filterEmergency('hospital')">🏥 Hospitals & Trauma</button>
+          <button class="btn-secondary btn-sm" id="btnFilterEmergPolice" onclick="STS_APP.filterEmergency('police')">👮 Police & Tourist Booths</button>
+          <button class="btn-secondary btn-sm" id="btnFilterEmergNat" onclick="STS_APP.filterEmergency('national')">📞 National 24/7 Helplines</button>
+        </div>
+
+        <!-- Emergency Cards Container -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;" id="emergencyListContainer">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+
+      <!-- ================= 7. OFFLINE SOS EMERGENCY ================= -->
+      <section id="view-sos" class="tab-content">
+        <div class="view-header">
+          <h2 data-i18n="sosTitle">Offline SOS Emergency System</h2>
+          <p data-i18n="sosSubtitle">Zero-network fail-safe distress beacon with GPS coordinate dispatch and audible distress siren</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <!-- Left: Big SOS Action Terminal -->
+          <div class="sentinel-card" style="text-align: center; border-color: rgba(239, 68, 68, 0.4);">
+            <div style="font-size: 3.5rem; margin-bottom: 8px;">🚨</div>
+            <h3 style="font-size: 1.4rem; font-weight: 800; color: #f87171; margin-bottom: 8px;">
+              Sentinel Fail-Safe Beacon
+            </h3>
+            <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">
+              Pressing the trigger will initiate a 5-second countdown, log GPS telemetry, synthesize a high-decibel siren alarm, and draft an instant SMS distress message.
+            </p>
+
+            <button class="btn-danger" style="font-size: 1.2rem; padding: 18px 36px; border-radius: var(--radius-full); box-shadow: 0 0 35px rgba(239, 68, 68, 0.6);" onclick="STS_APP.triggerSosFlow()">
+              TRIGGER EMERGENCY SOS
+            </button>
+
+            <div style="margin-top: 24px; padding: 14px; background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-md); text-align: left; font-size: 0.82rem;">
+              <div style="font-weight: 700; color: #fca5a5; margin-bottom: 4px;">🛡️ Offline Fail-Safe Architecture:</div>
+              <div>• Operates without active internet via local SMS / Bluetooth mesh broadcast.</div>
+              <div>• GPS satellite coordinates cached locally for zero-latency dispatch.</div>
+              <div>• Audio siren synthesized via browser Web Audio API oscillator.</div>
+            </div>
+          </div>
+
+          <!-- Right: Live Coordinates & Emergency Dispatch Payload -->
+          <div class="sentinel-card">
+            <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 14px;">📡 Live Telemetry & Dispatch Payload</h3>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+              <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-card); border-radius: var(--radius-sm);">
+                <span style="color: var(--text-muted);">Current GPS Coordinates:</span>
+                <span id="sosCoordinatesVal" style="font-weight: 700; color: #38bdf8;">11.4102° N, 76.6950° E</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-card); border-radius: var(--radius-sm);">
+                <span style="color: var(--text-muted);">Estimated Landmark:</span>
+                <span id="sosLandmarkVal" style="font-weight: 700;">Near Ooty Lake Promenade, Ooty</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-card); border-radius: var(--radius-sm);">
+                <span style="color: var(--text-muted);">Primary Emergency Contact:</span>
+                <span id="sosContactVal" style="font-weight: 700; color: #4ade80;">Ramesh (+91 98765 43210)</span>
+              </div>
+            </div>
+
+            <label class="form-label">Pre-Formatted Emergency SMS / WhatsApp Message:</label>
+            <textarea id="sosMessagePreview" class="form-textarea" rows="4" readonly style="resize: none; font-size: 0.85rem; font-family: monospace;"></textarea>
+
+            <div style="display: flex; gap: 10px; margin-top: 14px;">
+              <button class="btn-secondary btn-sm" style="flex: 1;" onclick="STS_APP.copySosMessage()">
+                📋 Copy Dispatch Text
+              </button>
+              <button class="btn-primary btn-sm" style="flex: 1;" onclick="STS_APP.simulateSendSms()">
+                📱 Send SMS / WhatsApp
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 8. SMART TRAVEL TIMELINE ================= -->
+      <section id="view-timeline" class="tab-content">
+        <div class="view-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h2 data-i18n="timelineTitle">Smart Travel Timeline</h2>
+            <p data-i18n="timelineSubtitle">Verified chronological travel memory log with security status and location tags</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-secondary btn-sm" onclick="STS_APP.exportTimelineSummary()">
+              📄 Export Viva Summary
+            </button>
+            <button class="btn-primary btn-sm" onclick="STS_APP.openAddTimelineModal()" data-i18n="addTimelineBtn">
+              + Add New Check-in
+            </button>
+          </div>
+        </div>
+
+        <div class="sentinel-card">
+          <div class="timeline-feed" id="timelineFeedList">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 9. AI TRAVEL ASSISTANT CHATBOT ================= -->
+      <section id="view-aichat" class="tab-content">
+        <div class="view-header">
+          <h2 data-i18n="aiChatTitle">Sentinel AI Travel Assistant</h2>
+          <p data-i18n="aiChatSubtitle">Ask anything about local safety, scams to avoid, hidden gems, and travel regulations</p>
+        </div>
+
+        <div class="chat-container">
+          <!-- Chat messages area -->
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-bubble bot">
+              Hello Dhanusri! I am <strong>Sentinel AI</strong>, your travel safety companion. I have real-time access to destination advisories, safety scores, BLE items, and emergency directories. Ask me anything or click a quick prompt below!
+            </div>
+          </div>
+
+          <!-- Suggested prompt chips -->
+          <div class="chat-suggestions">
+            <button class="chip-btn" onclick="STS_APP.sendQuickPrompt('Is it safe to visit Ooty viewpoints at night?')">
+              🌙 Night safety in Ooty?
+            </button>
+            <button class="chip-btn" onclick="STS_APP.sendQuickPrompt('What should I do if I lose my luggage?')">
+              🧳 What if I lose my bag?
+            </button>
+            <button class="chip-btn" onclick="STS_APP.sendQuickPrompt('What are common tourist scams in Jaipur?')">
+              ⚠️ Common scams in Jaipur?
+            </button>
+            <button class="chip-btn" onclick="STS_APP.sendQuickPrompt('Suggest a 3-day budget plan for Munnar')">
+              💸 3-day budget for Munnar?
+            </button>
+            <button class="chip-btn" onclick="STS_APP.sendQuickPrompt('What are the emergency numbers in Tamil Nadu?')">
+              🚨 Emergency numbers?
+            </button>
+          </div>
+
+          <!-- Input bar -->
+          <div class="chat-input-bar">
+            <input type="text" id="chatInput" class="form-input" placeholder="Type your travel or safety question..." onkeydown="if(event.key === 'Enter') STS_APP.sendChatMessage()">
+            <button class="btn-primary" onclick="STS_APP.sendChatMessage()">
+              Send ✈️
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 10. USER PROFILE & SETTINGS ================= -->
+      <section id="view-profile" class="tab-content">
+        <div class="view-header">
+          <h2 data-i18n="profileTitle">Traveler Digital Profile & Settings</h2>
+          <p data-i18n="profileSubtitle">Manage your emergency contacts, medical credentials, and presentation presets</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 340px 1fr; gap: 24px;">
+          <!-- Profile Badge Card -->
+          <div class="sentinel-card" style="text-align: center;">
+            <div class="user-avatar-badge" style="width: 72px; height: 72px; margin: 0 auto 12px; font-size: 2rem;">
+              D
+            </div>
+            <h3 id="profileNameDisplay" style="font-size: 1.25rem; font-weight: 800;">Dhanusri R</h3>
+            <span class="ticker-badge" style="background: rgba(14, 165, 233, 0.15); color: #38bdf8; display: inline-block; margin-top: 6px;">
+              VERIFIED SENTINEL TRAVELER
+            </span>
+            <div style="margin-top: 14px; font-size: 0.8rem; color: var(--text-muted);">
+              Traveler Badge ID: <strong style="color: #cbd5e1;" id="profileBadgeIdDisplay">STS-2026-IND-9904</strong>
+            </div>
+
+            <!-- Medical Alert Badge -->
+            <div style="margin-top: 20px; padding: 14px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: var(--radius-md); text-align: left;">
+              <div style="font-weight: 800; font-size: 0.85rem; color: #f87171; margin-bottom: 6px;">
+                🩸 Medical Emergency Profile
+              </div>
+              <div style="font-size: 0.8rem; display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="color: var(--text-muted);">Blood Group:</span>
+                <strong id="profileBloodDisplay">O+ Positive</strong>
+              </div>
+              <div style="font-size: 0.8rem; display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="color: var(--text-muted);">Known Allergies:</span>
+                <span>None (Penicillin Safe)</span>
+              </div>
+              <div style="font-size: 0.8rem; display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);">Travel Insurance:</span>
+                <span style="color: #4ade80;">Active (Care Health)</span>
+              </div>
+            </div>
+
+            <!-- College Viva Demo Data Loader Button -->
+            <button class="btn-secondary" style="width: 100%; margin-top: 20px; border-color: #0ea5e9; color: #38bdf8;" onclick="STS_APP.loadDemoPresetData()" data-i18n="loadDemoData">
+              ⚡ Load Viva Demo Dataset
+            </button>
+            <button class="btn-secondary btn-sm" style="width: 100%; margin-top: 8px;" onclick="STS_APP.logout()" data-i18n="logoutBtn">
+              Log Out
+            </button>
+          </div>
+
+          <!-- Edit Profile & Settings Controls -->
+          <div class="sentinel-card">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 16px;">Guardian & Emergency Settings</h3>
+            <form onsubmit="STS_APP.saveProfileSettings(event)">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="fullNameLabel">Full Name</label>
+                  <input type="text" id="settingName" class="form-input" value="Dhanusri R">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="emailLabel">Email Address</label>
+                  <input type="email" id="settingEmail" class="form-input" value="tourist.dhanusri@sentinel.org">
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="emergencyContactName">Primary Emergency Contact</label>
+                  <input type="text" id="settingEmergName" class="form-input" value="Ramesh (Parent)">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="emergencyContactPhone">Emergency Phone Number</label>
+                  <input type="tel" id="settingEmergPhone" class="form-input" value="+91 98765 43210">
+                </div>
+              </div>
+
+              <h4 style="font-size: 0.95rem; font-weight: 700; margin: 18px 0 12px;">App Features & Simulation Modes</h4>
+              <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                <label style="display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem; cursor: pointer;">
+                  <span>🛰️ Simulated Offline Mode (Tests zero-network SOS)</span>
+                  <input type="checkbox" id="toggleOfflineSim" onchange="STS_APP.toggleOfflineMode(this.checked)">
+                </label>
+                <label style="display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem; cursor: pointer;">
+                  <span>🔊 Web Audio Siren & BLE Beeps Enabled</span>
+                  <input type="checkbox" id="toggleAudioEffects" checked>
+                </label>
+                <label style="display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem; cursor: pointer;">
+                  <span>🎯 High-Precision BLE Proximity Tracking</span>
+                  <input type="checkbox" id="toggleBlePrecision" checked>
+                </label>
+              </div>
+
+              <button type="submit" class="btn-primary">
+                Save Sentinel Preferences
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav">
+    <button class="mobile-nav-btn active" onclick="STS_APP.navigateTo('dashboard')">
+      <span>📊</span>
+      <span>Home</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="STS_APP.navigateTo('planner')">
+      <span>🗺️</span>
+      <span>Plan</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="STS_APP.navigateTo('qr')">
+      <span>🏛️</span>
+      <span>QR Guide</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="STS_APP.navigateTo('ble')">
+      <span>📡</span>
+      <span>BLE</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="STS_APP.navigateTo('sos')">
+      <span>🚨</span>
+      <span>SOS</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="STS_APP.navigateTo('aichat')">
+      <span>💬</span>
+      <span>AI Bot</span>
+    </button>
+  </nav>
+
+  <!-- ================= MODALS & OVERLAYS ================= -->
+
+  <!-- 1. ACTIVE SOS COUNTDOWN & EMERGENCY MODAL -->
+  <div id="sosCountdownModal" class="modal-overlay">
+    <div class="modal-card strobe-active" style="text-align: center; border-color: #ef4444; max-width: 440px;">
+      <h2 style="color: #f87171; font-weight: 800; font-size: 1.5rem;">🚨 EMERGENCY SOS INITIATED</h2>
+      <p style="color: #cbd5e1; font-size: 0.88rem; margin-top: 6px;">
+        Broadcasting distress beacon & GPS coordinates in:
+      </p>
+
+      <!-- Circular Countdown Display -->
+      <div class="countdown-dial" id="sosCountdownNumber">5</div>
+
+      <p style="font-size: 0.8rem; color: #fca5a5; margin-bottom: 20px;">
+        Tap CANCEL immediately if this was triggered accidentally.
+      </p>
+
+      <div style="display: flex; gap: 12px;">
+        <button class="btn-secondary" style="flex: 1; border-color: rgba(255,255,255,0.4);" onclick="STS_APP.cancelSos()">
+          ✕ CANCEL BEACON
+        </button>
+        <button class="btn-danger" style="flex: 1;" onclick="STS_APP.executeSosNow()">
+          DISPATCH NOW
+        </button>
+      </div>
+
+      <!-- Siren Mute Toggle -->
+      <div style="margin-top: 16px;">
+        <button class="btn-secondary btn-sm" id="sirenMuteBtn" onclick="STS_APP.toggleSirenSound()">
+          🔊 Siren Active (Mute)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. ADD NEW BLE ITEM MODAL -->
+  <div id="addBleModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="font-weight: 800;">Register New BLE Tag</h3>
+        <button class="modal-close-btn" onclick="STS_APP.closeModals()">✕</button>
+      </div>
+      <form onsubmit="STS_APP.handleAddBleDevice(event)">
+        <div class="form-group">
+          <label class="form-label">Item / Belonging Name</label>
+          <input type="text" id="newBleName" class="form-input" placeholder="e.g. Sony WH-1000XM5 Headphones" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select id="newBleCategory" class="form-select">
+            <option value="Electronics">Electronics</option>
+            <option value="Luggage">Luggage & Baggage</option>
+            <option value="Personal Documents">Personal Documents</option>
+            <option value="Vehicle Keys">Vehicle Keys</option>
+            <option value="Outdoor Gear">Outdoor Gear</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Simulated Signal Proximity</label>
+          <select id="newBleProximity" class="form-select">
+            <option value="near">Near (In Hand / Pocket) ~0.8m</option>
+            <option value="room">Medium (In Same Hotel Room) ~3.5m</option>
+            <option value="far">Far (In Lobby / Luggage Area) ~12m</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%;">
+          Register & Pair Tag
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. ADD NEW TIMELINE CHECK-IN MODAL -->
+  <div id="addTimelineModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="font-weight: 800;">Record Safe Travel Check-in</h3>
+        <button class="modal-close-btn" onclick="STS_APP.closeModals()">✕</button>
+      </div>
+      <form onsubmit="STS_APP.handleAddTimeline(event)">
+        <div class="form-group">
+          <label class="form-label">Location / Monument Name</label>
+          <input type="text" id="newTlPlace" class="form-input" placeholder="e.g. Doddabetta Peak Viewpoint" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Security & Comfort Status</label>
+          <select id="newTlStatus" class="form-select">
+            <option value="Safe Check-in">🟢 Safe Check-in (Calm & Verified)</option>
+            <option value="Scanned QR Guide">🏛️ Scanned QR Guide</option>
+            <option value="High Caution Area">🟡 High Caution (Fog / Crowded)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Traveler Notes</label>
+          <textarea id="newTlNotes" class="form-textarea" rows="3" placeholder="Scenic view, clear road conditions, temperature 16°C."></textarea>
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%;">
+          Save Check-in to Timeline
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. SIMULATED PHONE CALL MODAL -->
+  <div id="callSimulatorModal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 400px; text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 8px;">📞</div>
+      <h3 id="callSimTitle" style="font-weight: 800; font-size: 1.25rem;">Calling Emergency Service...</h3>
+      <div id="callSimNumber" style="font-size: 1.5rem; color: #38bdf8; font-weight: 800; margin: 10px 0;">112</div>
+      <p id="callSimDesc" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">
+        Connecting to the Universal Emergency Command & Dispatch Cell.
+      </p>
+      <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-sm); padding: 10px; font-size: 0.8rem; color: #4ade80; margin-bottom: 20px;">
+        ✓ GPS Dispatch Coordinates Transmitted: 11.4102° N, 76.6950° E
+      </div>
+      <button class="btn-danger" style="width: 100%; border-radius: var(--radius-full);" onclick="STS_APP.closeModals()">
+        End Call
+      </button>
+    </div>
+  </div>
+
+  <!-- JavaScript Source Files -->
+  <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

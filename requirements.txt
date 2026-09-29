@@ -1,0 +1,8 @@
+# Smart Travel Sentinel - Cloud Deployment Dependencies
+# ----------------------------------------------------
+# The application runs as a high-performance, zero-dependency
+# web application powered by Python's built-in standard library (http.server).
+#
+# No external pip packages are required.
+# This file is provided for cloud buildpacks (Render, Heroku, Railway,
+# DigitalOcean, AWS) that detect Python applications via requirements.txt.
